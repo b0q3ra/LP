@@ -4,16 +4,55 @@ namespace Platform.LinearAlgebra {
 
     public class Matrix {
         double[,] mstorage;
+        
+
+
 
         //CONSTRUCTOR
-        public Matrix(int rows = 0, int columns = 0) { 
-            mstorage = new double[rows, columns];
-        }
-
         public Matrix(double[,] mstorage){
             this.mstorage = mstorage;
         }
-    
+
+        public Matrix(int rows = 0, int columns = 0) { 
+            mstorage = new double[rows, columns];
+            Identity();
+        }
+
+        public Matrix(int square){
+            mstorage = new double[square, square];
+            Identity();
+        }
+
+
+
+        //GENERATE IDENTITY
+        public void Identity(){
+            for(int row = 0; row < this.mstorage.GetLength(0); row++){
+                for(int column = 0; column < this.mstorage.GetLength(1); column++){
+                    if(row == column) mstorage[row, column] = 1;
+                    else mstorage[row, column] = 0;
+                }
+            }
+        }
+
+
+
+        //ARITHMETIC
+        public void Add(Matrix foreign){
+            for(int row = 0; row < mstorage.GetLength(0); row++){
+                for(int column = 0; column < mstorage.GetLength(0); column++){
+                    mstorage[row, column] += foreign.At(row, column);
+                }
+            }
+        }
+
+        public void Product(Matrix foreign){
+            
+            //FOREIGN AND LOCAL HAVE SAME NUMBER OF COL-ROW
+        }
+
+
+
 
         //SINGLE ELEMENT ACCESS
         public double At(int row, int column){
@@ -25,6 +64,7 @@ namespace Platform.LinearAlgebra {
         }
 
 
+
         //MASSIVE ACCESS
         public double[,] Storage(){
             return mstorage;
@@ -34,6 +74,21 @@ namespace Platform.LinearAlgebra {
             return this.mstorage = mstorage;
         }
 
+
+
+
+        //GET DIMENSIONS
+        public (int rows, int columns) Dim(){
+            return (this.mstorage.GetLength(0), this.mstorage.GetLength(1));
+        }
+        
+        public int Rows(){
+            return mstorage.GetLength(0);
+        }
+        public int Columns(){
+            return mstorage.GetLength(1);
+        }
+        
         //PRINT
         public void Print(){
 

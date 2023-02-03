@@ -20,7 +20,7 @@ namespace Platform
            });
 
 
-            m.Print();
+            LU decomposition = new LU(m);
         }
     }
 }
