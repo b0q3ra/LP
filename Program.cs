@@ -18,9 +18,12 @@ namespace Platform
             { 4,  2,  1},
             {-6, -1,  2},
            });
+            
+            LU machine = new LU(m);
 
+            machine.Simplify();
 
-            LU decomposition = new LU(m);
+            m.Print();
         }
     }
 }

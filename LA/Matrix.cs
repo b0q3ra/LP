@@ -7,7 +7,6 @@ namespace Platform.LinearAlgebra {
         
 
 
-
         //CONSTRUCTOR
         public Matrix(double[,] mstorage){
             this.mstorage = mstorage;
@@ -35,6 +34,14 @@ namespace Platform.LinearAlgebra {
             }
         }
 
+        //GENERATE NULL
+        public void Null(){
+            for(int row = 0; row < this.mstorage.GetLength(0); row++){
+                for(int column = 0; column < this.mstorage.GetLength(1); column++){
+                    mstorage[row, column] = 0;
+                }
+            }
+        }
 
 
         //ARITHMETIC
@@ -46,10 +53,56 @@ namespace Platform.LinearAlgebra {
             }
         }
 
-        public void Product(Matrix foreign){
+        public Matrix Product(Matrix foreign, bool postproduct = true){
             
-            //FOREIGN AND LOCAL HAVE SAME NUMBER OF COL-ROW
+            //CHECK IF DIMENSIONS COMPATIBLE FOR PRODUCT (MxN * NXK)
+            if(foreign.Rows() != this.Columns()) throw new Exception("Matrix column should havee the same dimensions");
+            int intermediateColRows = this.Columns();// N
+
+            //GENERATE NULL RESULT MATRIX
+            int resultRows = this.Rows();
+            int resultColumns = foreign.Columns();
+            Matrix result = new Matrix(resultRows, resultColumns);
+            result.Null();
+
+            
+            //CALCULATE NEW MATRIX
+            double temp = 0;
+            for(int row = 0; row < resultRows; row++){
+                for(int column = 0; column < resultColumns; column++){
+                    
+                    if(postproduct)temp = ProductAt(row, column, this, foreign);//THIS * FOREIGN
+                    else temp = ProductAt(row, column, foreign, this);//FOREIGN * THIS
+
+                    result.At(row, column, temp);
+                }
+            }
+
+            //RETURN RESULT
+            return result;
         }
+
+        public double ProductAt(int row, int column, Matrix A, Matrix B){
+            try{
+
+                //CHECK IF DIMENSIONS ARE VALID FOR MATRIX MULTIPLICATION (NxK * KxM)
+                if(A.Columns() != B.Rows()) throw new Exception("Matrix dimensions should match");
+                int intermediate = A.Columns();//intermediate = K
+                
+                //PERFOM CALCULATION
+                double temp = 0;
+                for(int n = 0; n < intermediate; n++){
+                    temp += A.At(row, n) * B.At(n, column);
+                }
+
+                //RETURN VALUE
+                return temp;
+            }catch(Exception e){
+                throw new Exception(e.Message);
+            }
+        }
+
+
 
 
 
@@ -81,7 +134,6 @@ namespace Platform.LinearAlgebra {
         public (int rows, int columns) Dim(){
             return (this.mstorage.GetLength(0), this.mstorage.GetLength(1));
         }
-        
         public int Rows(){
             return mstorage.GetLength(0);
         }
