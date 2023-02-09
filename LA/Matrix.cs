@@ -157,7 +157,7 @@ namespace Platform.LinearAlgebra {
                     Console.SetCursorPosition((10 * columnpointer) + offset, y);
 
                     
-                    Console.Write(mstorage[rowpointer, columnpointer]);//WRITE
+                    Console.Write(String.Format("{0:0.00}",mstorage[rowpointer, columnpointer]));//WRITE
                 }
                 Console.WriteLine();                
                 

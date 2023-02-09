@@ -14,16 +14,18 @@ namespace Platform
         static void Main(string[] args)
         {
            Matrix m = new Matrix(new double[,]{
-            { 2, -1,  3},
-            { 4,  2,  1},
-            {-6, -1,  2},
+            { 2, 1, 0},
+            { 1, 2, 1},
+            { 0, 1, 2},
            });
             
             LU machine = new LU(m);
 
-            machine.Simplify();
+            machine.Decompose();
 
-            m.Print();
+            Matrix l = machine.getLower();
+            l.Print();
+            
         }
     }
 }
