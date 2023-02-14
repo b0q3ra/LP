@@ -2,7 +2,7 @@ using System;
 
 namespace Platform.LinearAlgebra {
 
-    public class Matrix {
+    public class Matrix{
         double[,] mstorage;
         
 
@@ -54,32 +54,34 @@ namespace Platform.LinearAlgebra {
         }
 
         public Matrix Product(Matrix foreign, bool postproduct = true){
+
+            Matrix A;
+            Matrix B;
+            Matrix R;
             
             //CHECK IF DIMENSIONS COMPATIBLE FOR PRODUCT (MxN * NXK)
-            if(foreign.Rows() != this.Columns()) throw new Exception("Matrix column should havee the same dimensions");
-            int intermediateColRows = this.Columns();// N
-
-            //GENERATE NULL RESULT MATRIX
-            int resultRows = this.Rows();
-            int resultColumns = foreign.Columns();
-            Matrix result = new Matrix(resultRows, resultColumns);
-            result.Null();
+            if(postproduct){
+                if(this.Columns() != foreign.Rows()) throw new Exception($"Foreign Matrix dimensions should match {this.Rows()}x{this.Columns()}");
+                A = this;
+                B = foreign;
+            }else{
+                if(foreign.Columns() != this.Rows()) throw new Exception($"Foreign Matrix dimensions should match {this.Rows()}x{this.Columns()}");
+                A = foreign;
+                B = this;
+            }
+            R = new Matrix(A.Rows(), B.Columns());
 
             
-            //CALCULATE NEW MATRIX
-            double temp = 0;
-            for(int row = 0; row < resultRows; row++){
-                for(int column = 0; column < resultColumns; column++){
-                    
-                    if(postproduct)temp = ProductAt(row, column, this, foreign);//THIS * FOREIGN
-                    else temp = ProductAt(row, column, foreign, this);//FOREIGN * THIS
-
-                    result.At(row, column, temp);
+            //PERFORM CALCULATION
+            for(int row = 0; row < A.Rows(); row++){
+                for(int column = 0; column < B.Columns(); column++){
+                    R.At(row, column, ProductAt(row, column, A, B));
                 }
             }
 
             //RETURN RESULT
-            return result;
+            this.Storage(R.Storage());
+            return R;
         }
 
         public double ProductAt(int row, int column, Matrix A, Matrix B){
@@ -128,6 +130,11 @@ namespace Platform.LinearAlgebra {
         }
 
 
+        //CLONE
+        public object ShallowCopy(){
+             Matrix newMatrix =  new Matrix((double[,]) this.mstorage.Clone());
+             return newMatrix;
+        }
 
 
         //GET DIMENSIONS
@@ -162,6 +169,7 @@ namespace Platform.LinearAlgebra {
                 Console.WriteLine();                
                 
             }
+            Console.WriteLine();
         }
 
     }

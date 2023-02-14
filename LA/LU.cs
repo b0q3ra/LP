@@ -5,8 +5,8 @@ namespace Platform.LinearAlgebra
 
     public class LU
     {
-        Matrix L;
-        Matrix U;
+        public Matrix L;
+        public Matrix U;
         public Matrix matrix;
         
 
@@ -14,9 +14,9 @@ namespace Platform.LinearAlgebra
         public LU(Matrix matrix)
         {
 
-            this.matrix = matrix;
+            this.matrix = (Matrix) matrix.ShallowCopy();
 
-            (int rows, int columns) = matrix.Dim();
+            (int rows, int columns) = this.matrix.Dim();
             this.L = new Matrix(rows, columns);
             this.U = new Matrix(rows, columns);
 
@@ -26,30 +26,39 @@ namespace Platform.LinearAlgebra
         }
 
 
-        //DECOMPOSE
+        //DECOMPOSEtest
         public void Decompose()
         {
+            Matrix elementary = new Matrix(matrix.Rows(), matrix.Columns());
+            
             //SET L = MATRIX, U = Id
-            L = matrix;
-            U.Identity();
-
-            int diagonalLength = Math.Min(L.Rows(), L.Columns());
+            U = (Matrix) matrix.ShallowCopy();
+            L.Identity();
+            
+            int diagonalLength = Math.Min(U.Rows(), U.Columns());
             for (int pivotPosition = 0; pivotPosition < diagonalLength; pivotPosition++)
             {
 
+                
+
                 //FIND NEXT ROW WITH VALID PIVOT AND INTERCHANGE IT, IF NO NON-ZERO PIVOT EXISTS, RETURN
-                int nextPivotRow = FindRowPivot(L, pivotPosition);
+                int nextPivotRow = FindRowPivot(U, pivotPosition);
                 if(nextPivotRow == -1) return;
                 if(nextPivotRow != pivotPosition){
-                    Interchange(L, pivotPosition, nextPivotRow);
+                    elementary.Identity();
                     Interchange(U, pivotPosition, nextPivotRow);
+                    Interchange(elementary, pivotPosition, nextPivotRow);
+                    L.Product(elementary);
                 } 
-
+                
                 //ELIMINATE COLUMN UNDER PIVOT
-                for(int currentRow = pivotPosition + 1; currentRow < L.Rows(); currentRow++){
-                    double coefficient =  L.At(currentRow, pivotPosition) / L.At(pivotPosition, pivotPosition);
-                    AddScaled(L, pivotPosition, currentRow, (-1) * coefficient);
-                    AddScaled(U, pivotPosition, currentRow, coefficient);
+                for(int currentRow = pivotPosition + 1; currentRow < U.Rows(); currentRow++){
+                    elementary.Identity();
+                    double coefficient =  U.At(currentRow, pivotPosition) / U.At(pivotPosition, pivotPosition);
+                    AddScaled(U, pivotPosition, currentRow, (-1) * coefficient);
+                    AddScaled(elementary, pivotPosition, currentRow, (1) * coefficient);
+                    L.Product(elementary);
+                    
                 }
 
             }
