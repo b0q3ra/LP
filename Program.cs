@@ -19,16 +19,12 @@ namespace Platform
             { 0, 1, 2},
            });
 
-            
-            LU machine = new LU(m);
-            machine.Decompose();
-            Matrix l = machine.getLower();
-            Matrix u = machine.getUpper();
+           LDU machine = new LDU(m);
+           machine.Decompose();
+           Matrix l = machine.getLower();
+           Matrix u = machine.getUpper();
 
-            l.Print();
-            u.Print();
-            l.Product(u);
-            l.Print();
+            
 
         }
     }

@@ -27,7 +27,7 @@ namespace Platform.LinearAlgebra
 
 
         //DECOMPOSEtest
-        public void Decompose()
+        public virtual void Decompose()
         {
             Matrix elementary = new Matrix(matrix.Rows(), matrix.Columns());
             
